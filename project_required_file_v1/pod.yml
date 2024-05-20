@@ -1,0 +1,14 @@
+# pod.yaml template file that creates pod
+kind: Pod
+apiVersion: v1
+metadata:
+    name: abctechnologies-pod
+    namespace: default
+    labels:
+        role: abc-tech-app
+spec:
+    containers:
+        - image: salvathshaik/abctechnologies:docker_tag
+          name: app
+
+

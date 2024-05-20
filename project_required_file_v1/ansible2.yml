@@ -1,0 +1,10 @@
+- hosts: localhost
+  become: yes
+  tasks:
+          #- name: delete the previous of kubernetes objects 
+    #  command: kubectl delete -f /home/edureka/deployment.yml
+  - name: Create a Deployment by reading the definition from a local file
+    # command: docker_tag= "{{ $docker_tag }}"
+    #    command: sed -i "s/docker_tag/$docker_tag/g" /home/edureka/deployment.yml 
+    command: sudo kubectl --kubeconfig=/etc/kubernetes/admin.conf apply -f deployment.yml
+    # command: sed -i "s/$docker_tag/docker_tag/g"  /home/edureka/deployment.yml
