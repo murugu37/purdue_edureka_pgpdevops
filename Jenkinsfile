@@ -15,7 +15,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', credentialsId: 'ed5260b743c24bec8eaaf2eefa0cf09c', url: 'https://github.com/murugu37/purdue_edureka_pgpdevops.git'
+                git branch: 'main', url: 'https://github.com/murugu37/purdue_edureka_pgpdevops.git'
             }
         }
 
