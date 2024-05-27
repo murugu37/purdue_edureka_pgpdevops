@@ -9,7 +9,7 @@ pipeline {
     stage('Checkout') {
       steps {
         sh 'echo passed'
-        git branch: 'main', url: 'https://github.com/murugu37/purdue_edureka_pgpdevops.git'
+        //git branch: 'main', url: 'https://github.com/murugu37/purdue_edureka_pgpdevops.git'
       }
     }
     stage('Build and Test') {
