@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         IMAGE_TAG = "${BUILD_NUMBER}"
+        DOCKER_CREDENTIALS_ID = 'docker-cred' // Ensure this matches your stored Docker credentials ID
     }
 
     stages {
@@ -38,11 +39,14 @@ pipeline {
             }
         }
 
-        /* stage('Build Docker Image') {
+        stage('Build Docker Image') {
             steps {
                 script {
+                    // Check if Docker is running
+                    sh 'docker version || { echo "Docker is not running"; exit 1; }'
+
                     // Echo statement for logging
-                    sh 'echo "Build Docker Image"'
+                    echo 'Building Docker Image'
 
                     // Build the Docker image with the specified tag
                     sh "docker build -t murugu37/pgpdevopsproject:${IMAGE_TAG} ."
@@ -54,7 +58,12 @@ pipeline {
             steps {
                 script {
                     // Echo statement for logging
-                    sh 'echo "Push to Repo"'
+                    echo 'Pushing Docker Image to Repo'
+
+                    // Login to Docker Hub (if needed, otherwise ensure the Jenkins Docker plugin handles this)
+                    withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin"
+                    }
 
                     // Push the Docker image to the Docker Hub repository
                     sh "docker push murugu37/pgpdevopsproject:${IMAGE_TAG}"
@@ -62,6 +71,7 @@ pipeline {
             }
         }
 
+        /*
         Uncomment and configure if needed for updating deployment files
         stage('Update Deployment File') {
             environment {
