@@ -1,9 +1,14 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_TAG = "${BUILD_NUMBER}"
+    }
+
     stages {
         stage('Checkout SCM') {
             steps {
+                // Checkout the code from the specified Git repository using stored credentials
                 checkout([
                     $class: 'GitSCM',
                     branches: [[name: '*/main']],
@@ -11,7 +16,7 @@ pipeline {
                     extensions: [],
                     userRemoteConfigs: [[
                         url: 'https://github.com/murugu37/purdue_edureka_pgpdevops.git',
-                        credentialsId: 'git-credsID' // Ensure this matches your stored credentials ID
+                        credentialsId: 'git-credsID' // Ensure this matches your stored Git credentials ID
                     ]]
                 ])
             }
@@ -19,44 +24,46 @@ pipeline {
 
         stage('Build and Test') {
             steps {
+                // List files in the workspace (for debugging purposes)
                 sh 'ls -ltr'
-                // Build the project and create a JAR file
-                sh 'mvn clean package'
+
+                // Compile the Maven project
+                sh 'mvn compile'
+
+                // Run the tests using Maven
+                sh 'mvn test'
+
+                // Package the project, typically creating a JAR or WAR file
+                sh 'mvn package'
             }
         }
 
-        // Uncomment and fix the static code analysis stage if needed
-        /*
-        stage('Static Code Analysis') {
-            environment {
-                SONAR_URL = "http://34.201.116.83:9000"
-            }
-            steps {
-                withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
-                    sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}'
-                }
-            }
-        }
-        */
-
-        stage('Build and Push Docker Image') {
-            environment {
-                DOCKER_IMAGE = "muruga/devops:${BUILD_NUMBER}"
-                // DOCKERFILE_LOCATION = "java-maven-sonar-argocd-helm-k8s/spring-boot-app/Dockerfile"
-                REGISTRY_CREDENTIALS = credentials('docker-cred')
-            }
+        stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'docker build -t ${DOCKER_IMAGE} .'
-                    def dockerImage = docker.image("${DOCKER_IMAGE}")
-                    docker.withRegistry('https://index.docker.io/v1/', "docker-cred") {
-                        dockerImage.push()
-                    }
+                    // Echo statement for logging
+                    sh 'echo "Build Docker Image"'
+
+                    // Build the Docker image with the specified tag
+                    sh "docker build -t murugu37/pgpdevopsproject:${IMAGE_TAG} ."
                 }
             }
         }
 
-       /*stage('Update Deployment File') {
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    // Echo statement for logging
+                    sh 'echo "Push to Repo"'
+
+                    // Push the Docker image to the Docker Hub repository
+                    sh "docker push murugu37/pgpdevopsproject:${IMAGE_TAG}"
+                }
+            }
+        }
+
+        /* Uncomment and configure if needed for updating deployment files
+        stage('Update Deployment File') {
             environment {
                 GIT_REPO_NAME = "pgp_devops_project"
                 GIT_USER_NAME = "iam-muruga"
@@ -66,14 +73,21 @@ pipeline {
                     sh '''
                         git config user.email "murugu37@gmail.com"
                         git config user.name "Murugaboopathy"
-                        BUILD_NUMBER=${BUILD_NUMBER}
-                        sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
+                        sed -i "s/replaceImageTag/${IMAGE_TAG}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
                         git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
-                        git commit -m "Update deployment image to version ${BUILD_NUMBER}"
+                        git commit -m "Update deployment image to version ${IMAGE_TAG}"
                         git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
                     '''
                 }
             }
-        }*/
+        }
+        */
+    }
+
+    post {
+        always {
+            // Cleanup workspace after build
+            cleanWs()
+        }
     }
 }
