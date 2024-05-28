@@ -1,25 +1,22 @@
-FROM ubuntu:18.04
+FROM docker.io/library/ubuntu:18.04
 
 # Update and install necessary packages
-RUN apt-get update && \
-    apt-get -y upgrade && \
-    apt-get -y install openjdk-8-jdk wget && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get -y update && apt-get -y upgrade
+RUN apt-get -y install openjdk-8-jdk wget
 
-# Create a directory for Tomcat
+# Create the Tomcat directory
 RUN mkdir /usr/local/tomcat
 
 # Download and extract Tomcat
-RUN wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.86/bin/apache-tomcat-9.0.86.tar.gz -O /tmp/apache-tomcat-9.0.86.tar.gz && \
-    tar -xvzf /tmp/apache-tomcat-9.0.86.tar.gz -C /usr/local/tomcat --strip-components=1 && \
-    rm /tmp/apache-tomcat-9.0.86.tar.gz
+RUN wget https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.65/bin/apache-tomcat-9.0.65.tar.gz -O /tmp/apache-tomcat-9.0.65.tar.gz && \
+    tar -xvzf /tmp/apache-tomcat-9.0.65.tar.gz -C /usr/local/tomcat --strip-components=1 && \
+    rm /tmp/apache-tomcat-9.0.65.tar.gz
 
-# Add WAR files to the webapps directory
-COPY **/*.war /usr/local/tomcat/webapps/
+# Copy the WAR files to the webapps directory
+ADD **/*.war /usr/local/tomcat/webapps
 
-# Expose the necessary port
+# Expose port 8080
 EXPOSE 8080
 
 # Start Tomcat
-CMD ["/usr/local/tomcat/bin/catalina.sh", "run"]
+CMD /usr/local/tomcat/bin/catalina.sh run
