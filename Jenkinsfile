@@ -38,7 +38,7 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        /* stage('Build Docker Image') {
             steps {
                 script {
                     // Echo statement for logging
@@ -62,7 +62,7 @@ pipeline {
             }
         }
 
-        /* Uncomment and configure if needed for updating deployment files
+        Uncomment and configure if needed for updating deployment files
         stage('Update Deployment File') {
             environment {
                 GIT_REPO_NAME = "pgp_devops_project"
