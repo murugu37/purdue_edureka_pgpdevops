@@ -19,7 +19,7 @@ spec:
                 app: abc-tech-app
         spec:
             containers:
-                - image: salvathshaik/abctechnologies
+                - image: murugu37/pgpdevopsproject
                   name: app
 ---
 

@@ -8,7 +8,7 @@ metadata:
         role: abc-tech-app
 spec:
     containers:
-        - image: salvathshaik/abctechnologies:docker_tag
+        - image: murugu37/pgpdevopsproject:docker_tag
           name: app
 
 

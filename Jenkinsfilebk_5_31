@@ -4,11 +4,6 @@ pipeline {
     environment {
         IMAGE_TAG = "${BUILD_NUMBER}"
         DOCKER_CREDENTIALS_ID = 'docker-cred' // Ensure this matches your stored Docker credentials ID
-        GIT_CREDENTIALS_ID = 'git-credsID' // Ensure this matches your stored Git credentials ID
-        TARGET_INSTANCE_IP = 'target-instance-ip' // Replace with the actual IP address of the target EC2 instance
-        TARGET_USER = 'ec2-user' // Replace with the actual SSH username for the target instance
-        KUBECONFIG_PATH = '/etc/kubernetes/admin.conf' // Ensure this path is valid on the target instance
-        SSH_CREDENTIALS_ID = 'ssh-credentials-id' // Ensure this matches your stored SSH credentials ID
     }
 
     stages {
@@ -22,7 +17,7 @@ pipeline {
                     extensions: [],
                     userRemoteConfigs: [[
                         url: 'https://github.com/murugu37/purdue_edureka_pgpdevops.git',
-                        credentialsId: "${env.GIT_CREDENTIALS_ID}"
+                        credentialsId: 'git-credsID' // Ensure this matches your stored Git credentials ID
                     ]]
                 ])
             }
@@ -76,20 +71,27 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') {
+        /*
+        Uncomment and configure if needed for updating deployment files
+        stage('Update Deployment File') {
+            environment {
+                GIT_REPO_NAME = "pgp_devops_project"
+                GIT_USER_NAME = "iam-muruga"
+            }
             steps {
-                script {
-                    sshagent([env.SSH_CREDENTIALS_ID]) {
-                        sh """
-                            ssh -o StrictHostKeyChecking=no ${env.TARGET_USER}@${env.TARGET_INSTANCE_IP} '
-                                sudo kubectl --kubeconfig=${env.KUBECONFIG_PATH} create deploy pgpapp --image=murugu37/pgpdevopsproject:${IMAGE_TAG} --replicas=2
-                                sudo kubectl --kubeconfig=${env.KUBECONFIG_PATH} expose deploy pgpapp --name=svc1 --type=NodePort --protocol=TCP --port=8080 --target-port=8080
-                            '
-                        """
-                    }
+                withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
+                    sh '''
+                        git config user.email "murugu37@gmail.com"
+                        git config user.name "Murugaboopathy"
+                        sed -i "s/replaceImageTag/${IMAGE_TAG}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
+                        git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
+                        git commit -m "Update deployment image to version ${IMAGE_TAG}"
+                        git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
+                    '''
                 }
             }
         }
+        */
     }
 
     post {

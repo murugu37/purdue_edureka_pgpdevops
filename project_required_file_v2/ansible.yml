@@ -5,7 +5,7 @@
           community.docker.docker_image:
               build:
                   path: "/home/edureka/Desktop"
-              name: docker.io/salvathshaik/abctechnologies
+              name: docker.io/murugu37/pgpdevopsproject
               #tag: test
               push: true
               source: build
@@ -15,7 +15,7 @@
         - name: start a container
           community.docker.docker_container:
              name: abc-application
-             image: salvathshaik/abctechnologies
+             image: murugu37/pgpdevopsproject
              state: started
              ports:
                  - 1234:8080
