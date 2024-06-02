@@ -100,8 +100,8 @@ pipeline {
             steps {
                 script {
                     // Configure Git user (if necessary)
-                    sh 'git config user.email "murugu37@gmail.com"'
-                    sh 'git config user.name "murugu37"'
+                    sh 'git config user.email "you@example.com"'
+                    sh 'git config user.name "Your Name"'
 
                     // Add changes, commit, and push to the main branch
                     sh 'git add .'
