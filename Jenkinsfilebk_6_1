@@ -9,13 +9,6 @@ pipeline {
         TARGET_USER = 'ec2-user' // Replace with the actual SSH username for the target instance
         KUBECONFIG_PATH = '/etc/kubernetes/admin.conf' // Ensure this path is valid on the target instance
         SSH_CREDENTIALS_ID = 'ssh-credentials-id' // Ensure this matches your stored SSH credentials ID
-        REMOTE_USER = 'ec2-user'
-        REMOTE_HOST = '54.196.193.42'
-        DEPLOY_NAME = 'pgpapp'
-        IMAGE_NAME = "murugu37/pgpdevopsproject:${IMAGE_TAG}"
-        SERVICE_NAME = 'svc1'
-        NODE_PORT = 8080
-        TARGET_PORT = 8080
     }
 
     stages {
@@ -89,8 +82,8 @@ pipeline {
                     sshagent([env.SSH_CREDENTIALS_ID]) {
                         sh """
                             ssh -o StrictHostKeyChecking=no ${env.TARGET_USER}@${env.TARGET_INSTANCE_IP} '
-                                sudo kubectl --kubeconfig=${env.KUBECONFIG_PATH} create deploy ${env.DEPLOY_NAME} --image=${env.IMAGE_NAME} --replicas=2 &&
-                                sudo kubectl --kubeconfig=${env.KUBECONFIG_PATH} expose deploy ${env.DEPLOY_NAME} --name=${env.SERVICE_NAME} --type=NodePort --protocol=TCP --port=${env.NODE_PORT} --target-port=${env.TARGET_PORT}
+                                sudo kubectl --kubeconfig=${env.KUBECONFIG_PATH} create deploy pgpapp --image=murugu37/pgpdevopsproject:${IMAGE_TAG} --replicas=2
+                                sudo kubectl --kubeconfig=${env.KUBECONFIG_PATH} expose deploy pgpapp --name=svc1 --type=NodePort --protocol=TCP --port=8080 --target-port=8080
                             '
                         """
                     }
