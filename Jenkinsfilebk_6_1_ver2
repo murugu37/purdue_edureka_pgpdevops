@@ -5,10 +5,12 @@ pipeline {
         IMAGE_TAG = "${BUILD_NUMBER}"
         DOCKER_CREDENTIALS_ID = 'docker-cred' // Ensure this matches your stored Docker credentials ID
         GIT_CREDENTIALS_ID = 'git-credsID' // Ensure this matches your stored Git credentials ID
-        TARGET_INSTANCE_IP = 'your-actual-instance-ip' // Replace with the actual IP address of the target EC2 instance
+        TARGET_INSTANCE_IP = 'target-instance-ip' // Replace with the actual IP address of the target EC2 instance
         TARGET_USER = 'ec2-user' // Replace with the actual SSH username for the target instance
         KUBECONFIG_PATH = '/etc/kubernetes/admin.conf' // Ensure this path is valid on the target instance
         SSH_CREDENTIALS_ID = 'ssh-credentials-id' // Ensure this matches your stored SSH credentials ID
+        REMOTE_USER = 'ec2-user'
+        REMOTE_HOST = '54.196.193.42'
         DEPLOY_NAME = 'pgpapp'
         IMAGE_NAME = "murugu37/pgpdevopsproject:${IMAGE_TAG}"
         SERVICE_NAME = 'svc1'
@@ -91,24 +93,6 @@ pipeline {
                                 sudo kubectl --kubeconfig=${env.KUBECONFIG_PATH} expose deploy ${env.DEPLOY_NAME} --name=${env.SERVICE_NAME} --type=NodePort --protocol=TCP --port=${env.NODE_PORT} --target-port=${env.TARGET_PORT}
                             '
                         """
-                    }
-                }
-            }
-        }
-
-        stage('Push to Git') {
-            steps {
-                script {
-                    // Configure Git user (if necessary)
-                    sh 'git config user.email "murugu37@gmail.com"'
-                    sh 'git config user.name "murugu37"'
-
-                    // Add changes, commit, and push to the main branch
-                    sh 'git add .'
-                    sh 'git commit -m "Automated commit message" || echo "No changes to commit"'
-
-                    withCredentials([usernamePassword(credentialsId: GIT_CREDENTIALS_ID, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
-                        sh 'git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/murugu37/purdue_edureka_pgpdevops.git main'
                     }
                 }
             }
