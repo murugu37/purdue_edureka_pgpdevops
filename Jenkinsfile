@@ -5,7 +5,7 @@ pipeline {
         IMAGE_TAG = "${BUILD_NUMBER}"
         DOCKER_CREDENTIALS_ID = 'docker-cred' // Ensure this matches your stored Docker credentials ID
         GIT_CREDENTIALS_ID = 'git-credsID' // Ensure this matches your stored Git credentials ID
-        TARGET_INSTANCE_IP = 'your-actual-instance-ip' // Replace with the actual IP address of the target EC2 instance
+        TARGET_INSTANCE_IP = '54.196.193.42' // Replace with the actual IP address of the target EC2 instance
         TARGET_USER = 'ec2-user' // Replace with the actual SSH username for the target instance
         KUBECONFIG_PATH = '/etc/kubernetes/admin.conf' // Ensure this path is valid on the target instance
         SSH_CREDENTIALS_ID = 'ssh-credentials-id' // Ensure this matches your stored SSH credentials ID
