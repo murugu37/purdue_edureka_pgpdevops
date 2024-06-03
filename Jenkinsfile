@@ -96,23 +96,6 @@ pipeline {
             }
         }
 
-        stage('Push to Git') {
-            steps {
-                script {
-                    // Configure Git user (if necessary)
-                    sh 'git config user.email "murugu37@gmail.com"'
-                    sh 'git config user.name "murugu37"'
-
-                    // Add changes, commit, and push to the main branch
-                    sh 'git add .'
-                    sh 'git commit -m "Automated commit message" || echo "No changes to commit"'
-
-                    withCredentials([usernamePassword(credentialsId: GIT_CREDENTIALS_ID, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
-                        sh 'git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/murugu37/purdue_edureka_pgpdevops.git main'
-                    }
-                }
-            }
-        }
     }
 
     post {
