@@ -87,6 +87,7 @@ pipeline {
                     sshagent([env.SSH_CREDENTIALS_ID]) {
                         sh """
                             ssh -o StrictHostKeyChecking=no ${env.TARGET_USER}@${env.TARGET_INSTANCE_IP} '
+                                sudo kubectl --kubeconfig=${env.KUBECONFIG_PATH} delete deploy ${env.DEPLOY_NAME} || true
                                 sudo kubectl --kubeconfig=${env.KUBECONFIG_PATH} create deploy ${env.DEPLOY_NAME} --image=${env.IMAGE_NAME} --replicas=2 &&
                                 sudo kubectl --kubeconfig=${env.KUBECONFIG_PATH} expose deploy ${env.DEPLOY_NAME} --name=${env.SERVICE_NAME} --type=NodePort --protocol=TCP --port=${env.NODE_PORT} --target-port=${env.TARGET_PORT}
                             '
