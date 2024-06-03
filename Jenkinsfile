@@ -86,7 +86,7 @@ pipeline {
                 script {
                     sshagent([env.SSH_CREDENTIALS_ID]) {
                         sh """
-                            ssh -o StrictHostKeyChecking=no ${env.TARGET_USER}@${env.TARGET_INSTANCE_IP} '
+                            ssh -o StrictHostKeyChecking=no ${env.TARGET_INSTANCE_IP} '
                                 sudo kubectl --kubeconfig=${env.KUBECONFIG_PATH} create deploy ${env.DEPLOY_NAME} --image=${env.IMAGE_NAME} --replicas=2 &&
                                 sudo kubectl --kubeconfig=${env.KUBECONFIG_PATH} expose deploy ${env.DEPLOY_NAME} --name=${env.SERVICE_NAME} --type=NodePort --protocol=TCP --port=${env.NODE_PORT} --target-port=${env.TARGET_PORT}
                             '
@@ -100,8 +100,8 @@ pipeline {
             steps {
                 script {
                     // Configure Git user (if necessary)
-                    sh 'git config user.email "you@example.com"'
-                    sh 'git config user.name "Your Name"'
+                    sh 'git config user.email "murugu37@gmail.com"'
+                    sh 'git config user.name "murugu37"'
 
                     // Add changes, commit, and push to the main branch
                     sh 'git add .'
