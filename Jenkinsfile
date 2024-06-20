@@ -5,7 +5,7 @@ pipeline {
         IMAGE_TAG = "${BUILD_NUMBER}"
         DOCKER_CREDENTIALS_ID = 'docker-cred'
         GIT_CREDENTIALS_ID = 'git-credsID'
-        TARGET_INSTANCE_IP = '35.168.3.197'
+        TARGET_INSTANCE_IP = '35.168.3.187'
         TARGET_USER = 'ubuntu'
         KUBECONFIG_PATH = '/etc/kubernetes/admin.conf'
         SSH_CREDENTIALS_ID = 'ssh-credentials-id'
